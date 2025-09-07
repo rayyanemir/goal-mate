@@ -36,6 +36,6 @@ link website: https://rayyan-emir-goalmate.pbp.cs.ui.ac.id/
 5. Django cocok dijadikan permulaan belajar framework karena menyediakan fitur lengkap dan terstruktur seperti ORM, autentikasi, admin panel, template, dan routing tanpa perlu banyak library tambahan.
    Konsep arsitektur MVT-nya juga jelas sehingga membantu pemula memahami pemisahan antara data, logika, dan tampilan. Selain itu,d jango memiliki dokumentasi yang sangat baik serta komunitas yang besar sehingga memudahkan pencarian solusi.
 
-6. Untuk asisten dosen pada tutorial 1 kerjanya sudah bagus. Saya sangat terbantu saat ada kesalahan karena bisa langsung menghubungi lewat voice chat zoom.
+6. Untuk asisten dosen pada tutorial 1 kerjanya sudah bagus. Saya sangat terbantu saat ada kesalahan karena bisa langsung menghubungi lewat voice chat discord.
 
     
