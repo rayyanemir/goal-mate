@@ -1,8 +1,55 @@
-<h1> GoalMate</h1>
-<h4>Nama Aplikasi: </h4>
-<p>{{app_name}}</p> <!-- Ubah sesuai dengan npm kamu -->
-<h4>Nama: </h4>
-<p>{{student_name}}</p>
-<h4>Kelas: </h4>
-<p>{{student_class}}</p>
-<!-- Ubah sesuai dengan kelas kamu -->
+
+ <h1>GoalMate</h1>
+
+ <h5>Nama aplikasi: </h5>
+ <p>{{ app_name }}<p>
+
+ <h5>Name:</h5>
+ <p>{{ student_name }}</p>
+
+ <h5>Class:</h5>
+ <p>{{ student_class }}</p>
+
+<a href="{% url 'main:create_product' %}">
+  <button>+ Add Product</button>
+</a>
+
+<hr>
+
+{% if not product_list %}
+<p>Belum ada produk yang tersedia.</p>
+{% else %}
+
+{% for product in product_list %}
+<div>
+  <h2>
+    <a href="{% url 'main:show_product' product.id %}">{{ product.name }}</a>
+  </h2>
+
+  <p>
+    <b>{{ product.get_category_display }}</b>
+    {% if product.is_featured %} | <b>Featured</b>{% endif %}
+    {% if product.brand %} | Brand: {{ product.brand }}{% endif %}
+    | Stock: {{ product.stock }}
+    | Rating: {{ product.rating }}
+  </p>
+
+  <p><b>Harga: Rp{{ product.price }}</b></p>
+
+  {% if product.thumbnail %}
+  <img src="{{ product.thumbnail }}" alt="thumbnail" width="150" height="100">
+  <br />
+  {% endif %}
+
+  <p>{{ product.description|truncatewords:25 }}...</p>
+
+  <p>
+    <a href="{% url 'main:show_product' product.id %}">
+      <button>Detail Produk</button>
+    </a>
+  </p>
+</div>
+
+<hr>
+{% endfor %}
+{% endif %}
