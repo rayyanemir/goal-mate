@@ -135,13 +135,13 @@ Tugas 3:
    * untuk views xml:
    path('xml/', show_xml, name='show_xml')
 
-   *untuk views json:
+   * untuk views json:
    path('json/', show_json, name='show_json')
 
    * untuk views xml by id:
    path('xml/<str:news_id>/', show_xml_by_id, name='show_xml_by_id')
   
-   *untuk views json by id:
+   * untuk views json by id:
    path('json/<str:news_id>/', show_json_by_id, name='show_json_by_id')
 
    -Untuk membuat halaman yang menampilkan data objek model yang memiliki tombol "Add" yang akan redirect ke halaman form, serta tombol "Detail" pada setiap data objek model yang akan menampilkan halaman detail objek, saya membuat sebuah file bernama main.html di direktori templates di direktori main. Setelah itu saya mengedit template yang tersedia di web pbp. 
