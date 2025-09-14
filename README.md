@@ -26,7 +26,7 @@ Tugas 2:
     git push origin master
     git push pws master
    
-2. link : https://www.canva.com/design/DAGyT7DboN4/vR_5s-HFtxhxsw6mxeHxhg/edit?utm_content=DAGyT7DboN4&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+2. bagan : <img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/225a308a-b445-4055-a0c8-057895839668" />
    
    penjelasan:
    
@@ -156,6 +156,20 @@ Kita membutuhkan is_valid() karena:
   Setelah itu, halaman menampilkan nama produk, kategori, status featured (jika ada), brand, stok, rating, dan harga. Jika produk memiliki gambar thumbnail, gambar tersebut juga ditampilkan berukuran besar. Terakhir, deskripsi produk ditampilkan secara penuh tanpa dipotong.
 
 -Tidak ada feedback, kerja asdos sudah bagus
+
+6. Hasil SS :
+
+   Xml:
+   <img width="1387" height="812" alt="Image" src="https://github.com/user-attachments/assets/065ffeb4-05e7-4d3b-9ec1-6ccf4ac3e702" />
+
+   Json:
+   <img width="1467" height="793" alt="Image" src="https://github.com/user-attachments/assets/c30c2cfa-694f-486c-8510-ffdf0699aa85" />
+
+   Xml by Id:
+   <img width="1530" height="863" alt="Image" src="https://github.com/user-attachments/assets/3cc5491a-b2ee-416a-b191-ad05e7246276" />
+
+   Json by Id:
+   <img width="1530" height="863" alt="Image" src="https://github.com/user-attachments/assets/fba262c4-6c22-429f-b163-f04450ef83a8" />
 
 
     
