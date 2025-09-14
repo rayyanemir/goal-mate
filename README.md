@@ -54,49 +54,49 @@ Tugas 2:
 Tugas 3:
 1. Data delivery adalah proses mengirimkan data dari server ke client (misalnya browser atau aplikasi mobile) atau sebaliknya. Kita memerlukannya karena:
 
-  -Interaksi real-time: Agar aplikasi dapat menampilkan data terbaru kepada pengguna tanpa harus melakukan refresh manual.
+   -Interaksi real-time: Agar aplikasi dapat menampilkan data terbaru kepada pengguna tanpa harus melakukan refresh manual.
 
-  -Integrasi antar sistem: Platform modern biasanya terdiri dari beberapa layanan (microservices), sehingga perlu data delivery untuk komunikasi antar layanan.
+   -Integrasi antar sistem: Platform modern biasanya terdiri dari beberapa layanan (microservices), sehingga perlu data delivery untuk komunikasi antar layanan.
 
-  -Pengalaman pengguna yang lebih baik: Pengiriman data yang efisien membuat aplikasi lebih responsif.
+   -Pengalaman pengguna yang lebih baik: Pengiriman data yang efisien membuat aplikasi lebih responsif.
 
-  -Keamanan dan kontrol data: Data delivery memungkinkan kita menerapkan autentikasi, otorisasi, dan validasi data sebelum sampai ke pengguna.
+   -Keamanan dan kontrol data: Data delivery memungkinkan kita menerapkan autentikasi, otorisasi, dan validasi data sebelum sampai ke pengguna.
 
 2. JSON lebih baik untuk kebanyakan aplikasi web modern karena:
 
-  -Sintaks lebih ringkas dan mudah dibaca manusia dibanding XML yang verbose.
+   -Sintaks lebih ringkas dan mudah dibaca manusia dibanding XML yang verbose.
 
-  -Lebih cepat diproses oleh browser atau JavaScript karena native support di JavaScript (JSON.parse, JSON.stringify).
+   -Lebih cepat diproses oleh browser atau JavaScript karena native support di JavaScript (JSON.parse, JSON.stringify).
 
-  -Menghemat bandwidth karena ukuran file lebih kecil dibanding XML.
+   -Menghemat bandwidth karena ukuran file lebih kecil dibanding XML.
 
-Walaupun begitu, XML masih digunakan jika:
+   Walaupun begitu, XML masih digunakan jika:
 
-  -Membutuhkan validation schema yang kompleks.
+   -Membutuhkan validation schema yang kompleks.
 
-  -Interoperabilitas dengan sistem lama yang menggunakan XML.
+   -Interoperabilitas dengan sistem lama yang menggunakan XML.
 
-Alasan popularitas JSON: ringkas, mudah diintegrasikan dengan JavaScript, efisien dalam ukuran dan parsing, cocok untuk REST API.
+   Alasan popularitas JSON: ringkas, mudah diintegrasikan dengan JavaScript, efisien dalam ukuran dan parsing, cocok untuk REST API.
 
 3. Fungsi is_valid() pada form Django:
 
-  -Memeriksa validitas input dari user berdasarkan aturan yang ditentukan pada field (misal required, tipe data, panjang minimal/maksimal).
+   -Memeriksa validitas input dari user berdasarkan aturan yang ditentukan pada field (misal required, tipe data, panjang minimal/maksimal).
 
-  -Membersihkan data (cleaned_data) sehingga bisa digunakan dengan aman.
+   -Membersihkan data (cleaned_data) sehingga bisa digunakan dengan aman.
 
-Kita membutuhkan is_valid() karena:
+   Kita membutuhkan is_valid() karena:
 
-  -Mencegah data tidak valid masuk ke database.
+   -Mencegah data tidak valid masuk ke database.
 
-  -Menghindari error dan potensi bug ketika memproses data user.
+   -Menghindari error dan potensi bug ketika memproses data user.
 
-  -Memudahkan pengelolaan feedback error kepada pengguna.
+   -Memudahkan pengelolaan feedback error kepada pengguna.
 
 4. csrf_token digunakan untuk mencegah serangan CSRF (Cross-Site Request Forgery). CSRF terjadi ketika penyerang memanfaatkan sesi login pengguna untuk melakukan aksi yang tidak diinginkan tanpa sepengetahuan pengguna.Jika tidak menambahkan csrf_token, form akan rentan dieksploitasi, misalnya penyerang dapat membuat halaman jahat yang mengirim request ke aplikasi menggunakan kredensial pengguna yang sedang login. Akibatnya, data atau akun pengguna bisa dimanipulasi tanpa izin. Dengan csrf_token, setiap request POST memiliki token unik yang hanya diketahui server dan browser, sehingga request dari situs lain akan ditolak.
 
 5. Cara mengimplementasikan checklist secara step-by-step:
 
-  -import forms dan models dari main.forms dan main.models di file views.py dalam direktori main. Kemudian buat ke empat fungsi berikut:
+   -import forms dan models dari main.forms dan main.models di file views.py dalam direktori main. Kemudian buat ke empat fungsi berikut:
 
     * untuk views xml:
     def show_xml(request):
@@ -130,32 +130,28 @@ Kita membutuhkan is_valid() karena:
 
       #untuk views xml by id dan json by id menggunakan try except untuk menangani keadaan dimana data tidak tersedia
 
-  -Untuk merouting URL masing masing views, kita hanya perlu mengimport fungsi-fungsi yang sudah kita buat sebelumnya dari main.views di main.urls, kemudian menambahkan path di dalam urlpatterns untuk masing-masing views.
+   -Untuk merouting URL masing masing views, kita hanya perlu mengimport fungsi-fungsi yang sudah kita buat sebelumnya dari main.views di main.urls, kemudian menambahkan path di dalam urlpatterns untuk masing-masing views.
 
-  * untuk views xml:
-  path('xml/', show_xml, name='show_xml')
+   * untuk views xml:
+   path('xml/', show_xml, name='show_xml')
 
-  *untuk views json:
-  path('json/', show_json, name='show_json')
+   *untuk views json:
+   path('json/', show_json, name='show_json')
 
-  * untuk views xml by id:
-  path('xml/<str:news_id>/', show_xml_by_id, name='show_xml_by_id')
+   * untuk views xml by id:
+   path('xml/<str:news_id>/', show_xml_by_id, name='show_xml_by_id')
   
-  *untuk views json by id:
-  path('json/<str:news_id>/', show_json_by_id, name='show_json_by_id')
+   *untuk views json by id:
+   path('json/<str:news_id>/', show_json_by_id, name='show_json_by_id')
 
-  -Untuk membuat halaman yang menampilkan data objek model yang memiliki tombol "Add" yang akan redirect ke halaman form, serta tombol "Detail" pada setiap data objek model yang akan menampilkan halaman detail objek, saya membuat sebuah file bernama main.html di direktori templates di direktori main. Setelah itu saya mengedit template yang tersedia di web pbp. 
-  Halaman main.html menampilkan daftar semua produk yang ada di database. Di bagian atas, terdapat informasi umum (nama aplikasi, nama mahasiswa, kelas) dan tombol “+ Add Product” untuk menuju halaman form penambahan produk. Jika belum ada produk, akan muncul pesan kosong. 
-  Jika ada, setiap produk ditampilkan dalam daftar berisi nama (bisa diklik ke detail), kategori, brand, stok, rating, harga, gambar thumbnail (jika ada), dan deskripsi singkat. Tiap produk juga memiliki tombol “Detail Produk” untuk melihat informasi lengkapnya.
+   -Untuk membuat halaman yang menampilkan data objek model yang memiliki tombol "Add" yang akan redirect ke halaman form, serta tombol "Detail" pada setiap data objek model yang akan menampilkan halaman detail objek, saya membuat sebuah file bernama main.html di direktori templates di direktori main. Setelah itu saya mengedit template yang tersedia di web pbp. 
+  Halaman main.html menampilkan daftar semua produk yang ada di database. Di bagian atas, terdapat informasi umum (nama aplikasi, nama mahasiswa, kelas) dan tombol “+ Add Product” untuk menuju halaman form penambahan produk. Jika belum ada produk, akan muncul pesan kosong. Jika ada, setiap produk ditampilkan dalam daftar berisi nama (bisa diklik ke detail), kategori, brand, stok, rating, harga, gambar thumbnail (jika ada), dan deskripsi singkat. Tiap produk juga memiliki tombol “Detail Produk” untuk melihat informasi lengkapnya.
 
-  -Di direktori templates di dalam direktori main, saya membuat sebuah file bernama create_product. Halaman create_product.html ini menampilkan form untuk menambahkan produk baru ke database. Saat halaman dibuka, pengguna melihat judul “Add Product” di atas form. Form ini menggunakan metode POST agar data yang dikirim tidak muncul di URL dan dapat diproses oleh server. 
-  Di dalam form, terdapat {% csrf_token %} untuk mencegah serangan CSRF, lalu {{ form.as_table }} yang secara otomatis menampilkan semua field dari ProductForm dalam bentuk tabel. Setelah pengguna mengisi form dan menekan tombol “Add Product”, data akan dikirim ke server untuk divalidasi dan disimpan ke database.
+   -Di direktori templates di dalam direktori main, saya membuat sebuah file bernama create_product. Halaman create_product.html ini menampilkan form untuk menambahkan produk baru ke database. Saat halaman dibuka, pengguna melihat judul “Add Product” di atas form. Form ini menggunakan metode POST agar data yang dikirim tidak muncul di URL dan dapat diproses oleh server. Di dalam form, terdapat {% csrf_token %} untuk mencegah serangan CSRF, lalu {{ form.as_table }} yang secara otomatis menampilkan semua field dari ProductForm dalam bentuk tabel. Setelah pengguna mengisi form dan menekan tombol “Add Product”, data akan dikirim ke server untuk divalidasi dan disimpan ke database.
 
-  -Di direktori templates di dalam direktori main, saya membuat sebuah file bernama product_detail.
-  Halaman product_detail.html ini menampilkan detail lengkap dari satu produk tertentu. Di bagian atas ada tombol “Back to Product List” untuk kembali ke halaman utama daftar produk. 
-  Setelah itu, halaman menampilkan nama produk, kategori, status featured (jika ada), brand, stok, rating, dan harga. Jika produk memiliki gambar thumbnail, gambar tersebut juga ditampilkan berukuran besar. Terakhir, deskripsi produk ditampilkan secara penuh tanpa dipotong.
+  -Di direktori templates di dalam direktori main, saya membuat sebuah file bernama product_detail. Halaman product_detail.html ini menampilkan detail lengkap dari satu produk tertentu. Di bagian atas ada tombol “Back to Product List” untuk kembali ke halaman utama daftar produk. Setelah itu, halaman menampilkan nama produk, kategori, status featured (jika ada), brand, stok, rating, dan harga. Jika produk memiliki gambar thumbnail, gambar tersebut juga ditampilkan berukuran besar. Terakhir, deskripsi produk ditampilkan secara penuh tanpa dipotong.
 
--Tidak ada feedback, kerja asdos sudah bagus
+ -Tidak ada feedback, kerja asdos sudah bagus
 
 6. Hasil SS :
 
