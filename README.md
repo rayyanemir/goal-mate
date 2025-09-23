@@ -52,6 +52,7 @@ Tugas 2:
 8. Untuk asisten dosen pada tutorial 1 kerjanya sudah bagus. Saya sangat terbantu saat ada kesalahan karena bisa langsung menghubungi lewat voice chat discord.
 
 Tugas 3:
+
 1. Data delivery adalah proses mengirimkan data dari server ke client (misalnya browser atau aplikasi mobile) atau sebaliknya. Kita memerlukannya karena:
 
    -Interaksi real-time: Agar aplikasi dapat menampilkan data terbaru kepada pengguna tanpa harus melakukan refresh manual.
@@ -167,5 +168,23 @@ Tugas 3:
    Json by Id:
    <img width="1530" height="863" alt="Image" src="https://github.com/user-attachments/assets/fba262c4-6c22-429f-b163-f04450ef83a8" />
 
+Tugas 4:
 
-    
+1. AuthenticationForm di Django adalah form bawaan yang digunakan untuk proses login user, yaitu memvalidasi username dan password agar memastikan user terdaftar di database. Form ini biasanya dipakai bersama LoginView dan terintegrasi langsung dengan model User serta sistem autentikasi Django, sehingga mengurangi kode boilerplate dan sudah mendukung validasi keamanan seperti pengecekan password hash. Kelebihannya adalah siap pakai, aman, dan mudah diintegrasikan, namun kekurangannya form ini kurang fleksibel jika ingin login menggunakan field selain username, misalnya email, dan tampilan defaultnya perlu dikustomisasi.
+
+2. Autentikasi dan otorisasi merupakan dua konsep berbeda namun saling terkait. Autentikasi adalah proses memastikan identitas user, misalnya login dengan username dan password, sedangkan otorisasi adalah proses menentukan hak akses user setelah identitasnya diketahui, misalnya user admin bisa menghapus data tetapi user biasa tidak. Django mengimplementasikan autentikasi melalui sistem django.contrib.auth dengan model User, fungsi login(), logout(), dan form AuthenticationForm, sementara otorisasi diimplementasikan menggunakan permissions, groups, dan decorators atau mixin seperti @login_required dan PermissionRequiredMixin untuk mengontrol akses ke resource tertentu.
+
+3. Dalam konteks menyimpan state di aplikasi web, session dan cookies memiliki perbedaan mendasar. Session menyimpan data di server dan browser hanya menyimpan session ID, sehingga lebih aman dan bisa menyimpan banyak data, namun memerlukan storage server dan lebih berat jika aplikasi harus diskalakan. Cookies menyimpan data langsung di browser client, lebih sederhana dan tidak memerlukan storage server, namun ukurannya terbatas dan rentan dimanipulasi atau dicuri. Kelebihan session adalah keamanannya lebih tinggi dan fleksibel menyimpan data, sedangkan kekurangannya memerlukan penyimpanan server dan bisa membebani performa saat scale-out. Kelebihan cookies adalah sederhana dan ringan untuk server, sedangkan kekurangannya adalah risiko keamanan dan keterbatasan kapasitas data.
+
+4. Penggunaan cookies tidak aman secara default karena data yang tersimpan di browser bisa dicuri atau dimanipulasi, misalnya melalui XSS, CSRF, atau session hijacking. Oleh karena itu, penggunaannya memerlukan kehati-hatian. Django menangani risiko ini dengan menandatangani cookies menggunakan opsi seperti SESSION_COOKIE_SECURE untuk memastikan cookies hanya dikirim melalui HTTPS, SESSION_COOKIE_HTTPONLY untuk mencegah akses melalui JavaScript, mendukung CSRF token untuk mencegah permintaan palsu, dan memungkinkan penyimpanan session di server melalui SESSION_ENGINE sehingga data sensitif tidak tersimpan langsung di client.
+
+5. Langkah-langkah implementasi checklist di atas secara step-by-step:
+
+   - Untuk membuat sistem autentikasi di Django, saya mengaktifkan virtual environment dan buka views.py di subdirektori main. Impor UserCreationForm, AuthenticationForm, messages, serta authenticate, login, dan logout. Kemudian, saya membuat fungsi register dengan UserCreationForm untuk membuat akun baru dan menampilkan pesan sukses, login_user dengan AuthenticationForm untuk autentikasi dan membuat session, serta logout_user untuk menghapus session dan redirect ke login. Setelah itu, saya membuat template register.html dan login.html menggunakan {{ form.as_table }} dan menampilkan pesan dari messages. Terakhir, di urls.py tambahkan path: register/, login/, dan logout/.
+
+   - Saya membuat akun dengan cara memencet hyperlink register, kemudian mengisi data yang diminta, lalu setelah masuk, saya menambahkan 3 produk. Setelah itu saya membuat akun lain dan melakukan hal yang sama
+
+   -Saya membuka `models.py` di subdirektori `main` dan menambahkan `user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)` pada model `Product` agar setiap product terhubung dengan seller yang membuatnya; `null=True` memungkinkan product lama tetap valid, dan `on_delete=models.CASCADE` memastikan product ikut terhapus jika user dihapus. Setelah membuat migrasi dan menjalankannya, saya memodifikasi `views.py` pada fungsi `create_product` menggunakan `commit=False` agar bisa menambahkan field `user = request.user` sebelum menyimpan product ke database. Saya juga mengubah fungsi `show_main` untuk menampilkan product berdasarkan filter `all` atau `my` sesuai seller yang login, menampilkan username seller dan cookie `last_login`. Di template `main.html`, saya menambahkan tombol filter “All Product” dan “My Product”, tombol “+ Add Product”, serta tombol “Logout”, sementara di `product_detail.html` saya menampilkan seller product dengan `{{ product.user.username }}` atau “Anonymous” jika tidak ada. Setelah menjalankan server dan mencoba beberapa akun, saya memastikan setiap user hanya melihat product yang ia buat sendiri, sehingga mekanisme penghubungan product dengan seller berhasil diterapkan.
+
+   -Saya menampilkan detail pengguna yang sedang login dengan mengakses request.user.username di view show_main, sehingga username user muncul di halaman utama. Selain itu, saya menyimpan waktu login terakhir ke cookie last_login di fungsi login_user menggunakan response.set_cookie('last_login', str(datetime.datetime.now())). Di halaman utama, saya mengambil nilai cookie tersebut dengan request.COOKIES.get('last_login', 'Never') dan menampilkannya di template, sehingga setiap kali saya login, username dan sesi login terakhir terlihat secara otomatis.
+
