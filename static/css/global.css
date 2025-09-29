@@ -1,0 +1,309 @@
+.form-style form input, 
+form textarea, 
+form select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #bfc0d1;
+    border-radius: 0.5rem;
+    background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(191,192,209,0.1));
+    color: #253045;
+    font-size: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.form-style form input:focus, 
+form textarea:focus, 
+form select:focus {
+    outline: none;
+    border-color: #00c6c6;
+    background: linear-gradient(135deg, rgba(255,255,255,1), rgba(0,198,198,0.05));
+    box-shadow: 
+        0 0 0 3px rgba(0, 198, 198, 0.15),
+        0 4px 12px rgba(0, 198, 198, 0.1),
+        inset 0 1px 2px rgba(0, 198, 198, 0.1);
+    transform: translateY(-1px);
+}
+
+.form-style form input:hover:not(:focus),
+form textarea:hover:not(:focus),
+form select:hover:not(:focus) {
+    border-color: #00c6c6;
+    background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(0,198,198,0.03));
+    box-shadow: 0 2px 8px rgba(37, 48, 69, 0.1);
+}
+
+/* Regular Label Style */
+.form-style .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-style .form-group label {
+    display: block;
+    color: #253045;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Enhanced Checkbox Styles */
+.form-style input[type="checkbox"] {
+    width: 1.5rem !important;
+    height: 1.5rem;
+    padding: 0;
+    border: 2px solid #bfc0d1;
+    border-radius: 0.5rem;
+    background: linear-gradient(135deg, #ffffff, #f8f9ff);
+    cursor: pointer;
+    position: relative;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(37, 48, 69, 0.1);
+}
+
+.form-style input[type="checkbox"]:hover {
+    border-color: #00c6c6;
+    background: linear-gradient(135deg, #ffffff, rgba(0,198,198,0.1));
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 198, 198, 0.15);
+}
+
+.form-style input[type="checkbox"]:checked {
+    background: linear-gradient(135deg, #00c6c6, #253045);
+    border-color: #00c6c6;
+    transform: scale(1.1);
+    box-shadow: 
+        0 4px 12px rgba(0, 198, 198, 0.3),
+        inset 0 1px 2px rgba(255,255,255,0.2);
+}
+
+.form-style input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    animation: checkmarkAppear 0.3s ease-out;
+}
+
+.form-style input[type="checkbox"]:focus {
+    outline: none;
+    border-color: #00c6c6;
+    box-shadow: 
+        0 0 0 3px rgba(0, 198, 198, 0.15),
+        0 4px 8px rgba(0, 198, 198, 0.1);
+}
+
+/* Submit Button Styles */
+.form-style button[type="submit"],
+.form-style .btn-primary {
+    background: linear-gradient(135deg, #00c6c6, #253045);
+    border: none;
+    color: white;
+    padding: 0.875rem 2rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        0 4px 12px rgba(0, 198, 198, 0.3),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+.form-style button[type="submit"]:hover,
+.form-style .btn-primary:hover {
+    background: linear-gradient(135deg, #253045, #00c6c6);
+    transform: translateY(-2px);
+    box-shadow: 
+        0 6px 20px rgba(0, 198, 198, 0.4),
+        inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+.form-style button[type="submit"]:active,
+.form-style .btn-primary:active {
+    transform: translateY(-1px);
+    box-shadow: 
+        0 4px 12px rgba(0, 198, 198, 0.3),
+        inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Form Container Enhancement */
+.form-style {
+    background: linear-gradient(135deg, 
+        rgba(255,255,255,0.95) 0%, 
+        rgba(191,192,209,0.1) 50%, 
+        rgba(255,255,255,0.95) 100%);
+    border: 1px solid rgba(191,192,209,0.3);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 
+        0 10px 25px rgba(37, 48, 69, 0.1),
+        0 4px 10px rgba(0, 198, 198, 0.05);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.form-style::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -50%;
+    width: 200%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00c6c6, transparent);
+    animation: shimmer 3s infinite;
+}
+
+/* Form Title */
+.form-style h2,
+.form-style h3 {
+    color: #253045;
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+.form-style h2::after,
+.form-style h3::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(90deg, #00c6c6, #253045);
+    border-radius: 2px;
+}
+
+/* Checkbox Group */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+.checkbox-group label {
+    position: relative !important;
+    transform: none !important;
+    color: #253045 !important;
+    opacity: 0.8 !important;
+    background: none !important;
+    padding: 0 !important;
+    font-size: 0.9rem !important;
+    cursor: pointer;
+}
+
+/* Price Input Special Style */
+.price-input {
+    position: relative;
+}
+
+.price-input::before {
+    content: 'Rp';
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #00c6c6;
+    font-weight: 600;
+    z-index: 1;
+}
+
+.price-input input {
+    padding-left: 2.5rem !important;
+}
+
+/* Two Column Layout */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* Error States */
+.form-style .error input,
+.form-style .error textarea,
+.form-style .error select {
+    border-color: #ef4444;
+    background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(239,68,68,0.05));
+}
+
+.form-style .error input:focus,
+.form-style .error textarea:focus,
+.form-style .error select:focus {
+    border-color: #ef4444;
+    box-shadow: 
+        0 0 0 3px rgba(239, 68, 68, 0.15),
+        0 4px 12px rgba(239, 68, 68, 0.1);
+}
+
+.form-style .error-message {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.form-style .error-message::before {
+    content: '⚠️';
+    font-size: 0.75rem;
+}
+
+/* Animations */
+@keyframes checkmarkAppear {
+    0% {
+        transform: translate(-50%, -50%) scale(0) rotate(-45deg);
+        opacity: 0;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-style {
+        padding: 1.5rem 1rem;
+        border-radius: 0.75rem;
+    }
+    
+    .form-style form input, 
+    form textarea, 
+    form select {
+        padding: 0.625rem;
+        font-size: 0.9rem;
+    }
+}
