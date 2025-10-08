@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block meta %}
 <title>Register - GoalMate</title>
@@ -30,41 +31,11 @@
           <div class="w-20 h-1 bg-gradient-to-r from-cyan-400 to-blue-500 mx-auto mt-3 rounded-full"></div>
         </div>
 
-        <!-- Form Errors -->
-        {% if form.non_field_errors %}
-        <div class="mb-6">
-          {% for error in form.non_field_errors %}
-          <div class="px-4 py-3 rounded-xl text-sm border-l-4 border-red-400 bg-red-50 text-red-700 flex items-start">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3 mt-0.5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            <div>{{ error }}</div>
-          </div>
-          {% endfor %}
-        </div>
-        {% endif %}
-
-        {% if form.errors %}
-        <div class="mb-6 space-y-3">
-          {% for field, errors in form.errors.items %}
-          {% if field != '__all__' %}
-          {% for error in errors %}
-          <div class="px-4 py-3 rounded-xl text-sm border-l-4 border-orange-400 bg-orange-50 text-orange-700 flex items-start">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3 mt-0.5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"/>
-            </svg>
-            <div>
-              <strong class="font-semibold">{{ field|title }}:</strong> {{ error }}
-            </div>
-          </div>
-          {% endfor %}
-          {% endif %}
-          {% endfor %}
-        </div>
-        {% endif %}
+        <!-- AJAX Form Errors Container -->
+        <div id="formErrors" class="mb-6 space-y-3 hidden"></div>
 
         <!-- Registration Form -->
-        <form method="POST" action="" class="space-y-6">
+        <form id="registerForm" class="space-y-6">
           {% csrf_token %}
           
           <!-- Username -->
@@ -144,6 +115,7 @@
           <div class="pt-4">
             <button 
               type="submit" 
+              id="submitBtn"
               class="w-full bg-gradient-to-r from-cyan-500 via-blue-500 to-blue-600 text-white font-bold py-4 px-6 rounded-2xl hover:from-cyan-600 hover:via-blue-600 hover:to-blue-700 transform hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-2xl flex items-center justify-center space-x-3 relative overflow-hidden group">
               <span class="text-lg">Create My GoalMate Account</span>
               <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
@@ -152,36 +124,6 @@
             </button>
           </div>
         </form>
-
-        <!-- Messages -->
-        {% if messages %}
-        <div class="mt-8 space-y-3">
-          {% for message in messages %}
-          <div class="px-4 py-3 rounded-xl text-sm border-l-4 flex items-center
-            {% if message.tags == 'success' %}
-              border-green-400 bg-green-50 text-green-700
-            {% elif message.tags == 'error' %}
-              border-red-400 bg-red-50 text-red-700
-            {% else %}
-              border-blue-400 bg-blue-50 text-blue-700
-            {% endif %}">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3
-              {% if message.tags == 'success' %}text-green-500
-              {% elif message.tags == 'error' %}text-red-500
-              {% else %}text-blue-500{% endif %}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              {% if message.tags == 'success' %}
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              {% elif message.tags == 'error' %}
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              {% else %}
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              {% endif %}
-            </svg>
-            <div>{{ message }}</div>
-          </div>
-          {% endfor %}
-        </div>
-        {% endif %}
 
         <!-- Login Link -->
         <div class="mt-8 text-center pt-6">
@@ -212,6 +154,222 @@
     </div>
   </div>
 </div>
+
+<script>
+// Utility function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Show toast notification
+function showToast(title, message, type = 'info', duration = 5000) {
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `fixed top-4 right-4 z-50 p-4 rounded-2xl shadow-2xl border-l-4 transform transition-all duration-300 translate-x-full ${
+        type === 'success' ? 'bg-green-50 border-green-400 text-green-700' :
+        type === 'error' ? 'bg-red-50 border-red-400 text-red-700' :
+        type === 'warning' ? 'bg-orange-50 border-orange-400 text-orange-700' :
+        'bg-blue-50 border-blue-400 text-blue-700'
+    }`;
+    
+    toast.innerHTML = `
+        <div class="flex items-start space-x-3">
+            <div class="flex-shrink-0">
+                <svg class="w-5 h-5 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    ${type === 'success' ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>' :
+                    type === 'error' ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>' :
+                    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>'}
+                </svg>
+            </div>
+            <div class="flex-1">
+                <p class="font-semibold">${title}</p>
+                <p class="text-sm opacity-90">${message}</p>
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()" class="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Animate in
+    setTimeout(() => {
+        toast.classList.remove('translate-x-full');
+    }, 100);
+    
+    // Auto remove
+    if (duration > 0) {
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (toast.parentElement) {
+                        toast.remove();
+                    }
+                }, 300);
+            }
+        }, duration);
+    }
+    
+    return toast;
+}
+
+// Show form errors
+function showFormErrors(errors) {
+    const errorsContainer = document.getElementById('formErrors');
+    errorsContainer.innerHTML = '';
+    
+    if (errors.non_field_errors) {
+        errors.non_field_errors.forEach(error => {
+            const errorElement = document.createElement('div');
+            errorElement.className = 'px-4 py-3 rounded-xl text-sm border-l-4 border-red-400 bg-red-50 text-red-700 flex items-start';
+            errorElement.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3 mt-0.5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <div>${error}</div>
+            `;
+            errorsContainer.appendChild(errorElement);
+        });
+    }
+    
+    // Field-specific errors
+    Object.keys(errors).forEach(field => {
+        if (field !== 'non_field_errors') {
+            errors[field].forEach(error => {
+                const errorElement = document.createElement('div');
+                errorElement.className = 'px-4 py-3 rounded-xl text-sm border-l-4 border-orange-400 bg-orange-50 text-orange-700 flex items-start';
+                errorElement.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3 mt-0.5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                    </svg>
+                    <div>
+                        <strong class="font-semibold">${field.charAt(0).toUpperCase() + field.slice(1)}:</strong> ${error}
+                    </div>
+                `;
+                errorsContainer.appendChild(errorElement);
+            });
+        }
+    });
+    
+    errorsContainer.classList.remove('hidden');
+}
+
+// Clear form errors
+function clearFormErrors() {
+    const errorsContainer = document.getElementById('formErrors');
+    errorsContainer.innerHTML = '';
+    errorsContainer.classList.add('hidden');
+}
+
+// Handle form submission
+async function handleRegisterSubmit(event) {
+    event.preventDefault();
+    
+    const submitBtn = document.getElementById('submitBtn');
+    const originalText = submitBtn.innerHTML;
+    
+    // Show loading state
+    submitBtn.innerHTML = `
+        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+        </svg>
+        Creating Account...
+    `;
+    submitBtn.disabled = true;
+    
+    // Clear previous errors
+    clearFormErrors();
+    
+    // Get form data
+    const formData = new FormData(document.getElementById('registerForm'));
+    const data = {
+        username: formData.get('username'),
+        password1: formData.get('password1'),
+        password2: formData.get('password2'),
+        csrfmiddlewaretoken: getCookie('csrftoken')
+    };
+    
+    try {
+        const response = await fetch('{% url "main:register" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken'),
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            // Registration successful
+            showToast('Success!', 'Account created successfully! Redirecting...', 'success');
+            
+            // Redirect to login page after a short delay
+            setTimeout(() => {
+                window.location.href = '{% url "main:login" %}';
+            }, 2000);
+            
+        } else {
+            // Registration failed - show errors
+            if (result.errors) {
+                showFormErrors(result.errors);
+                showToast('Registration Failed', 'Please check the form for errors', 'error');
+            } else {
+                showToast('Error', result.message || 'Registration failed', 'error');
+            }
+        }
+        
+    } catch (error) {
+        console.error('Registration error:', error);
+        showToast('Network Error', 'Failed to connect to server', 'error');
+    } finally {
+        // Restore button state
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
+}
+
+// Initialize the page
+function initializeRegisterPage() {
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+        registerForm.addEventListener('submit', handleRegisterSubmit);
+    }
+    
+    // Add real-time validation if needed
+    const inputs = document.querySelectorAll('input[required]');
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (!this.value.trim()) {
+                this.classList.add('border-red-300');
+            } else {
+                this.classList.remove('border-red-300');
+            }
+        });
+    });
+}
+
+// Start when DOM is loaded
+document.addEventListener('DOMContentLoaded', initializeRegisterPage);
+</script>
 
 <style>
 /* Grid Pattern Background */
@@ -265,6 +423,13 @@ h1, h2, h3, h4, h5, h6, .font-bold, .font-semibold {
   .text-3xl {
     font-size: 1.875rem !important;
   }
+}
+
+/* Button loading state */
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
 }
 </style>
 {% endblock content %}

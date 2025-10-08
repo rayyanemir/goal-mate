@@ -44,46 +44,52 @@
       <p class="text-white/90 text-lg">Everything you need to complete your collection</p>
     </div>
 
+    <!-- 2 Tombol Action -->
+    <div class="flex justify-center space-x-4 mb-8">
+      <button onclick="showProductModal()" 
+              class="bg-gradient-to-r from-amber-400 to-amber-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center space-x-2 shadow-lg hover:shadow-xl">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path d="M12 4v16m8-8H4" stroke-width="2"/>
+        </svg>
+        <span>Add Product</span>
+      </button>
+      
+      <button onclick="refreshProducts()" 
+              class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center space-x-2 shadow-lg hover:shadow-xl">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-width="2"/>
+        </svg>
+        <span>Refresh</span>
+      </button>
+    </div>
+
     <!-- Filter Section -->
     <div class="bg-white rounded-2xl border border-slate-200 shadow-xl p-6 mb-8">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div class="flex space-x-3 mb-4 sm:mb-0">
-          <a href="?" 
-             class="{% if request.GET.filter == 'all' or not request.GET.filter %}
-                      bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg
-                    {% else %}
-                      bg-white text-slate-700 border border-slate-300 hover:bg-slate-50
-                    {% endif %}
-                    px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center space-x-2">
-            <!-- Globe Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 {% if request.GET.filter == 'all' or not request.GET.filter %}text-white{% else %}text-cyan-600{% endif %}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <button id="filter-all" 
+                  class="bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center space-x-2 shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <circle cx="12" cy="12" r="10" stroke-width="2"/>
               <path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" stroke-width="2"/>
             </svg>
             <span>All Products</span>
-          </a>
+          </button>
           
-          <a href="?filter=my" 
-             class="{% if request.GET.filter == 'my' %}
-                      bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg
-                    {% else %}
-                      bg-white text-slate-700 border border-slate-300 hover:bg-slate-50
-                    {% endif %}
-                    px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center space-x-2">
-            <!-- User Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 {% if request.GET.filter == 'my' %}text-white{% else %}text-cyan-600{% endif %}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <button id="filter-my" 
+                  class="bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center space-x-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <circle cx="12" cy="8" r="4" stroke-width="2"/>
               <path d="M6 20c0-3 3-6 6-6s6 3 6 6" stroke-width="2"/>
             </svg>
             <span>My Products</span>
-          </a>
+          </button>
         </div>
         
         {% if user.is_authenticated %}
-          <div class="flex items-center space-x-4 ml-auto">
+          <div class="flex items-center space-x-4">
             <div class="text-sm text-slate-700 bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
               <div class="flex items-center space-x-2">
-                <!-- Clock Icon -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <circle cx="12" cy="12" r="10" stroke-width="2"/>
                   <path d="M12 6v6l4 2" stroke-width="2"/>
@@ -102,113 +108,904 @@
       </div>
     </div>
 
+    <!-- Loading State -->
+    <div id="loading" class="bg-white rounded-3xl border border-slate-200 shadow-2xl p-12 text-center">
+      <svg class="animate-spin h-12 w-12 text-cyan-600 inline-block mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+      </svg>
+      <h3 class="text-xl font-bold text-slate-800 mb-2">Loading Products</h3>
+      <p class="text-slate-600">Getting your football gear ready...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="error" class="bg-white rounded-3xl border border-red-200 shadow-2xl p-12 text-center hidden">
+      <div class="w-20 h-20 mx-auto mb-6">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-full h-full text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+        </svg>
+      </div>
+      <h3 class="text-xl font-bold text-slate-800 mb-2">Failed to Load Products</h3>
+      <p class="text-slate-600 mb-6" id="errorMessage">Please try again later.</p>
+      <button onclick="refreshProducts()" class="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-width="2"/>
+        </svg>
+        <span>Try Again</span>
+      </button>
+    </div>
+
     <!-- Products Grid -->
-    {% if not product_list %}
-      <!-- Empty State -->
-      <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl p-12 text-center max-w-2xl mx-auto">
-        <div class="w-32 h-32 mx-auto mb-6">
-          <img src="{% static 'image/no-image.png' %}" alt="No products available" class="w-full h-full object-contain opacity-60">
-        </div>
-        
-        <h3 class="text-2xl font-bold text-slate-800 mb-4">No Products Yet</h3>
-        <p class="text-slate-600 mb-8 text-lg leading-relaxed">
-          Ready to kick off your GoalMate journey? Start by adding your first product to the store!
-        </p>
-        
-        <a href="{% url 'main:create_product' %}" 
-           class="inline-flex items-center space-x-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
-          <!-- Plus Icon -->
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path d="M12 4v16m8-8H4" stroke-width="2"/>
-          </svg>
-          <span>Add Your First Product</span>
-        </a>
-        
-        <div class="mt-8 pt-6 border-t border-slate-200">
-          <p class="text-slate-500 text-sm">
-            Build the ultimate football equipment collection with GoalMate
-          </p>
-        </div>
+    <div id="productsGrid" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+
+    <!-- Empty State -->
+    <div id="empty" class="bg-white rounded-3xl border border-slate-200 shadow-2xl p-12 text-center hidden">
+      <div class="w-32 h-32 mx-auto mb-6">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-full h-full text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+        </svg>
       </div>
       
-    {% else %}
-      <!-- Products Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {% for product in product_list %}
-          {% include 'card_product.html' with product=product %}
-        {% endfor %}
+      <h3 class="text-2xl font-bold text-slate-800 mb-4">No Products Yet</h3>
+      <p class="text-slate-600 mb-8 text-lg leading-relaxed">
+        Ready to kick off your GoalMate journey? Start by adding your first product to the store!
+      </p>
+      
+      <button onclick="showProductModal()" 
+              class="inline-flex items-center space-x-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path d="M12 4v16m8-8H4" stroke-width="2"/>
+        </svg>
+        <span>Add Your First Product</span>
+      </button>
+      
+      <div class="mt-8 pt-6 border-t border-slate-200">
+        <p class="text-slate-500 text-sm">
+          Build the ultimate football equipment collection with GoalMate
+        </p>
       </div>
+    </div>
 
-      <!-- Footer Stats -->
-      <div class="mt-12 text-center">
-        <div class="bg-white/80  rounded-2xl border border-white/20 p-6 max-w-md mx-auto">
-          <p class="text-slate-600 mb-4">Showing {{ product_list|length }} amazing football products</p>
-          <div class="flex items-center justify-center space-x-2 text-sm text-slate-500">
-            <!-- Trophy Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" class="w-5 h-5 text-cyan-600">
-              <line x1="96" y1="224" x2="160" y2="224" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
-              <line x1="128" y1="184" x2="128" y2="224" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
-              <path d="M58,128H48A32,32,0,0,1,16,96V80a8,8,0,0,1,8-8H56" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
-              <path d="M198,128h10a32,32,0,0,0,32-32V80a8,8,0,0,0-8-8H200" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
-              <path d="M56,48H200v63.1c0,39.7-31.75,72.6-71.45,72.9A72,72,0,0,1,56,112Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
-            </svg>
-            <span>More quality gear coming soon!</span>
-          </div>
-        </div>
-      </div>
-    {% endif %}
   </div>
 </div>
+
+<!-- Product Detail Modal -->
+<div id="productDetailModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onclick="hideProductDetailModal()"></div>
+        
+        <div class="relative inline-block w-full max-w-2xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-3xl">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-2xl font-bold text-slate-800">Product Details</h3>
+                <button onclick="hideProductDetailModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="p-1">
+                <div id="productDetailContent">
+                    <!-- Content will be loaded here by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Configuration - Gunakan hardcoded URLs
+const PRODUCTS_API_ENDPOINT = "/json/";
+const CREATE_PRODUCT_ENDPOINT = "/create-product-ajax/";
+const UPDATE_PRODUCT_ENDPOINT = "/edit-product-ajax/";
+const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
+
+// Function untuk delete URL
+function getDeleteProductUrl(id) {
+    return `/delete-product-ajax/${id}/`;
+}
+
+// DOM Elements
+const loadingSpinner = document.getElementById('loading');
+const errorMessage = document.getElementById('error');
+const emptyStateDisplay = document.getElementById('empty');
+const productsGridContainer = document.getElementById('productsGrid');
+const errorMessageText = document.getElementById('errorMessage');
+const showAllProductsButton = document.getElementById('filter-all');
+const showMyProductsButton = document.getElementById('filter-my');
+
+// State Variables
+let activeFilter = 'all';
+let allProductsData = [];
+
+// Show toast notification
+function showToast(title, message, type = 'info', duration = 5000) {
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `fixed top-4 right-4 z-50 p-4 rounded-2xl shadow-2xl border-l-4 transform transition-all duration-300 translate-x-full ${
+        type === 'success' ? 'bg-green-50 border-green-400 text-green-700' :
+        type === 'error' ? 'bg-red-50 border-red-400 text-red-700' :
+        type === 'warning' ? 'bg-orange-50 border-orange-400 text-orange-700' :
+        'bg-blue-50 border-blue-400 text-blue-700'
+    }`;
+    
+    toast.innerHTML = `
+        <div class="flex items-start space-x-3">
+            <div class="flex-shrink-0">
+                <svg class="w-5 h-5 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    ${type === 'success' ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>' :
+                    type === 'error' ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>' :
+                    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>'}
+                </svg>
+            </div>
+            <div class="flex-1">
+                <p class="font-semibold">${title}</p>
+                <p class="text-sm opacity-90">${message}</p>
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()" class="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Animate in
+    setTimeout(() => {
+        toast.classList.remove('translate-x-full');
+    }, 100);
+    
+    // Auto remove
+    if (duration > 0) {
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (toast.parentElement) {
+                        toast.remove();
+                    }
+                }, 300);
+            }
+        }, duration);
+    }
+    
+    return toast;
+}
+
+// Utility function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Update filter button appearance
+function updateFilterButtonsAppearance() {
+    if (!showAllProductsButton || !showMyProductsButton) return;
+    
+    if (activeFilter === 'all') {
+        showAllProductsButton.className = 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center space-x-2 shadow-lg';
+        showMyProductsButton.className = 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center space-x-2';
+    } else {
+        showMyProductsButton.className = 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center space-x-2 shadow-lg';
+        showAllProductsButton.className = 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center space-x-2';
+    }
+}
+
+// Show/hide page sections
+function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false, errorMsg = '' }) {
+    loadingSpinner.classList.toggle('hidden', !showLoading);
+    errorMessage.classList.toggle('hidden', !showError);
+    emptyStateDisplay.classList.toggle('hidden', !showEmpty);
+    productsGridContainer.classList.toggle('hidden', !showGrid);
+    
+    if (errorMsg) {
+        errorMessageText.textContent = errorMsg;
+    }
+}
+
+// Format price to IDR
+function formatPrice(price) {
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+    }).format(price);
+}
+
+// Format date
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('id-ID', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+}
+
+// Get readable category name
+function getReadableCategoryName(categoryCode) {
+    const categoryMapping = {
+        'jersey': 'Jersey',
+        'sepatu': 'Sepatu',
+        'bola': 'Bola',
+        'aksesori': 'Aksesori',
+        'lainnya': 'Lainnya'
+    };
+    return categoryMapping[categoryCode] || categoryCode;
+}
+
+// Create product card element
+function buildProductCardElement(productItem) {
+    const cardElement = document.createElement('div');
+    cardElement.className = 'bg-white rounded-2xl border border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col h-full transform hover:scale-105';
+
+    const formattedPrice = formatPrice(productItem.price);
+    const formattedDate = productItem.date_added ? formatDate(productItem.date_added) : 'Recently added';
+    const categoryLabel = getReadableCategoryName(productItem.category);
+    
+    // Check if current user is the product owner
+    const isProductOwner = CURRENT_USER_ID && Number(CURRENT_USER_ID) === Number(productItem.user_id);
+
+    // Thumbnail image or placeholder
+    const thumbnailHtml = productItem.thumbnail 
+        ? `<div onclick="showProductDetailModal('${productItem.id}')" class="cursor-pointer block">
+            <img src="${productItem.thumbnail}" alt="${productItem.name}" class="w-full h-48 object-cover">
+            </div>`
+        : `<div onclick="showProductDetailModal('${productItem.id}')" class="cursor-pointer block w-full h-48 bg-gradient-to-br from-cyan-100 to-blue-100 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            </div>`;
+
+    const cardHtml = `
+        ${thumbnailHtml}
+        <div class="p-6 flex flex-col flex-1">
+        <!-- Product Header -->
+        <div class="flex items-center justify-between mb-3">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-cyan-100 to-blue-100 text-cyan-700">
+            ${categoryLabel}
+            </span>
+            <span class="text-lg font-bold text-slate-800">${formattedPrice}</span>
+        </div>
+        
+        <!-- Product Name - BUAT CLICKABLE untuk detail modal -->
+        <div onclick="showProductDetailModal('${productItem.id}')" class="cursor-pointer">
+            <h3 class="text-xl font-bold text-slate-800 mb-2 line-clamp-2 leading-tight hover:text-cyan-600 transition-colors">
+            ${productItem.name}
+            </h3>
+        </div>
+        
+        <!-- Brand -->
+        ${productItem.brand ? `<p class="text-slate-600 text-sm mb-3">Brand: ${productItem.brand}</p>` : ''}
+        
+        <!-- Product Description -->
+        <p class="text-slate-600 text-sm leading-relaxed line-clamp-2 mb-4 flex-1">
+            ${productItem.description}
+        </p>
+        
+        <!-- Footer -->
+        <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+            <button onclick="showProductDetailModal('${productItem.id}')" 
+            class="text-cyan-600 hover:text-cyan-700 text-sm font-semibold transition-colors flex items-center space-x-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+            <span>View Details</span>
+            </button>
+            ${isProductOwner ? `
+            <div class="flex space-x-3">
+                <button onclick="event.stopPropagation(); showProductModal('${productItem.id}')" 
+                        class="text-amber-600 hover:text-amber-700 text-sm font-semibold transition-colors flex items-center space-x-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+                <span>Edit</span>
+                </button>
+                <button onclick="event.stopPropagation(); showDeleteModal('${productItem.id}', '${productItem.name.replace(/'/g, "\\'")}')" 
+                        class="text-red-600 hover:text-red-700 text-sm font-semibold transition-colors flex items-center space-x-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+                <span>Delete</span>
+                </button>
+            </div>
+            ` : ''}
+        </div>
+        </div>
+    `;
+
+    cardElement.innerHTML = cardHtml;
+    return cardElement;
+}
+
+// Function to show product detail modal
+async function showProductDetailModal(productId) {
+    try {
+        const response = await fetch(`/json/${productId}/`, {
+            headers: {
+                'Accept': 'application/json',
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch product details');
+        }
+
+        const product = await response.json();
+        renderProductDetail(product);
+        
+        // Show modal
+        const modal = document.getElementById('productDetailModal');
+        modal.classList.remove('hidden');
+        
+    } catch (error) {
+        console.error('Error loading product details:', error);
+        showToast('Error', 'Failed to load product details', 'error');
+    }
+}
+
+// Function to hide product detail modal
+function hideProductDetailModal() {
+    const modal = document.getElementById('productDetailModal');
+    modal.classList.add('hidden');
+}
+
+// Function to render product detail
+function renderProductDetail(product) {
+    const detailContent = document.getElementById('productDetailContent');
+    const formattedPrice = formatPrice(product.price);
+    const categoryLabel = getReadableCategoryName(product.category);
+    const formattedDate = product.created_at ? formatDate(product.created_at) : 'Unknown';
+
+    // Check if current user is the product owner
+    const isProductOwner = CURRENT_USER_ID && Number(CURRENT_USER_ID) === Number(product.user_id);
+
+    detailContent.innerHTML = `
+        <div class="space-y-6">
+            <!-- Product Image -->
+            ${product.thumbnail ? `
+                <img src="${product.thumbnail}" alt="${product.name}" class="w-full h-64 object-cover rounded-xl shadow-lg">
+            ` : `
+                <div class="w-full h-64 bg-gradient-to-br from-cyan-100 to-blue-100 rounded-xl flex items-center justify-center shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+            `}
+            
+            <!-- Product Info -->
+            <div>
+                <h4 class="text-2xl font-bold text-slate-800 mb-2">${product.name}</h4>
+                <p class="text-3xl font-bold text-cyan-600 mb-4">${formattedPrice}</p>
+            </div>
+
+            <!-- Product Details Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 rounded-xl p-4">
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-slate-600 font-medium">Category:</span>
+                        <span class="font-semibold text-slate-800">${categoryLabel}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-600 font-medium">Brand:</span>
+                        <span class="font-semibold text-slate-800">${product.brand || 'Not specified'}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-600 font-medium">Stock:</span>
+                        <span class="font-semibold ${product.stock > 0 ? 'text-green-600' : 'text-red-600'}">
+                            ${product.stock} units
+                        </span>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-slate-600 font-medium">Rating:</span>
+                        <span class="font-semibold text-amber-600">
+                            ${product.rating ? '⭐'.repeat(Math.round(product.rating)) + ` ${product.rating}/5` : 'No ratings'}
+                        </span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-600 font-medium">Added:</span>
+                        <span class="font-semibold text-slate-800">${formattedDate}</span>
+                    </div>
+                    ${product.user_username ? `
+                    <div class="flex justify-between">
+                        <span class="text-slate-600 font-medium">Seller:</span>
+                        <span class="font-semibold text-slate-800">${product.user_username}</span>
+                    </div>
+                    ` : ''}
+                </div>
+            </div>
+
+            <!-- Product Description -->
+            <div>
+                <h5 class="text-lg font-bold text-slate-800 mb-3">Description</h5>
+                <p class="text-slate-600 leading-relaxed whitespace-pre-line">${product.description || 'No description available'}</p>
+            </div>
+
+            <!-- Action Buttons - Only show if user is the owner -->
+            ${isProductOwner ? `
+            <div class="flex space-x-3 pt-4 border-t border-slate-200">
+                <button onclick="hideProductDetailModal(); showProductModal('${product.id}')" 
+                        class="flex-1 bg-amber-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-amber-600 transition-colors flex items-center justify-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                    <span>Edit</span>
+                </button>
+                <button onclick="hideProductDetailModal(); showDeleteModal('${product.id}', '${product.name.replace(/'/g, "\\'")}')" 
+                        class="flex-1 bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors flex items-center justify-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                    <span>Delete</span>
+                </button>
+            </div>
+            ` : ''}
+        </div>
+    `;
+}
+
+// Function to show product modal for add/edit
+function showProductModal(productId = null) {
+    console.log('🔍 showProductModal called with:', productId);
+    
+    const isEditMode = productId !== null && productId !== 'null' && productId !== 'undefined';
+    const modalTitle = isEditMode ? 'Edit Product' : 'Add New Product';
+    
+    // Get product data from allProductsData
+    let productData = null;
+    if (isEditMode) {
+        productData = allProductsData.find(p => p.id == productId);
+        console.log('Found product data:', productData);
+        if (!productData) {
+            showToast('Error', 'Product not found in local data', 'error');
+            return;
+        }
+    }
+
+    const modalHtml = `
+        <div class="fixed inset-0 z-50 overflow-y-auto">
+            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"></div>
+                
+                <div class="relative inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+                    <!-- Modal Header -->
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold text-gray-900">${modalTitle}</h3>
+                        <button onclick="hideProductModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <!-- Modal Form -->
+                    <form id="productForm">
+                        <div class="space-y-4">
+                            <!-- Product Name -->
+                            <div>
+                                <label for="productName" class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                                <input type="text" id="productName" name="name" required 
+                                       value="${productData ? productData.name.replace(/'/g, "&#39;") : ''}"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-colors">
+                            </div>
+                            
+                            <!-- Price -->
+                            <div>
+                                <label for="productPrice" class="block text-sm font-medium text-gray-700 mb-1">Price</label>
+                                <input type="number" id="productPrice" name="price" required min="0"
+                                       value="${productData ? productData.price : ''}"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-colors">
+                            </div>
+                            
+                            <!-- Description -->
+                            <div>
+                                <label for="productDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <textarea id="productDescription" name="description" rows="3"
+                                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-colors">${productData ? productData.description.replace(/'/g, "&#39;") : ''}</textarea>
+                            </div>
+                            
+                            <!-- Category -->
+                            <div>
+                                <label for="productCategory" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                                <select id="productCategory" name="category" required
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-colors">
+                                    <option value="">Select Category</option>
+                                    <option value="jersey" ${productData && productData.category === 'jersey' ? 'selected' : ''}>Jersey</option>
+                                    <option value="sepatu" ${productData && productData.category === 'sepatu' ? 'selected' : ''}>Sepatu</option>
+                                    <option value="bola" ${productData && productData.category === 'bola' ? 'selected' : ''}>Bola</option>
+                                    <option value="aksesori" ${productData && productData.category === 'aksesori' ? 'selected' : ''}>Aksesori</option>
+                                    <option value="lainnya" ${productData && productData.category === 'lainnya' ? 'selected' : ''}>Lainnya</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Brand -->
+                            <div>
+                                <label for="productBrand" class="block text-sm font-medium text-gray-700 mb-1">Brand (Optional)</label>
+                                <input type="text" id="productBrand" name="brand"
+                                       value="${productData ? productData.brand || '' : ''}"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-colors">
+                            </div>
+                            
+                            <!-- Stock -->
+                            <div>
+                                <label for="productStock" class="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+                                <input type="number" id="productStock" name="stock" min="0"
+                                       value="${productData ? productData.stock || 0 : 0}"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-colors">
+                            </div>
+                        </div>
+                        
+                        <!-- Form Actions -->
+                        <div class="flex space-x-3 mt-6 pt-6 border-t border-gray-200">
+                            <button type="button" onclick="hideProductModal()" 
+                                    class="flex-1 px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors">
+                                Cancel
+                            </button>
+                            <button type="button" onclick="handleProductSubmit('${productId}')" 
+                                    class="flex-1 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg font-medium hover:from-cyan-600 hover:to-blue-700 transition-colors">
+                                ${isEditMode ? 'Update Product' : 'Create Product'}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    console.log('✅ Modal created successfully');
+}
+
+// Function to hide product modal
+function hideProductModal() {
+    const modals = document.querySelectorAll('.fixed.inset-0');
+    modals.forEach(modal => {
+        if (modal.innerHTML.includes('productForm')) {
+            modal.remove();
+        }
+    });
+    console.log('Modal hidden');
+}
+
+// Function to handle product form submission - FIXED VERSION
+async function handleProductSubmit(productId = null) {
+    console.log('handleProductSubmit - productId:', productId);
+    
+    const isEditMode = productId !== null && productId !== 'null' && productId !== 'undefined';
+    
+    // Get form values
+    const name = document.getElementById('productName').value;
+    const price = document.getElementById('productPrice').value;
+    const description = document.getElementById('productDescription').value;
+    const category = document.getElementById('productCategory').value;
+    const brand = document.getElementById('productBrand').value;
+    const stock = document.getElementById('productStock').value;
+    
+    // Validate required fields
+    if (!name || !price || !category) {
+        showToast('Error', 'Please fill in all required fields', 'error');
+        return;
+    }
+    
+    const productData = {
+        name: name,
+        price: parseFloat(price),
+        description: description,
+        category: category,
+        brand: brand,
+        stock: parseInt(stock) || 0,
+        csrfmiddlewaretoken: getCookie('csrftoken')
+    };
+    
+    console.log('Product data to send:', productData);
+    
+    try {
+        let url, method;
+        
+        if (isEditMode) {
+            url = `/edit-product-ajax/${productId}/`;
+            method = 'PUT';
+            console.log('🔄 EDIT MODE - URL:', url);
+        } else {
+            url = '/create-product-ajax/';
+            method = 'POST';
+            console.log('🆕 CREATE MODE - URL:', url);
+        }
+        
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(productData)
+        });
+
+        console.log('Response status:', response.status);
+        const result = await response.json();
+        console.log('Response data:', result);
+
+        if (response.ok) {
+            showToast('Success!', isEditMode ? 'Product updated successfully' : 'Product created successfully', 'success');
+            hideProductModal();
+            refreshProducts();
+        } else {
+            const errorMsg = result.message || result.error || 'Failed to save product';
+            showToast('Error', errorMsg, 'error');
+        }
+        
+    } catch (error) {
+        console.error('Network error:', error);
+        showToast('Network Error', 'Failed to connect to server', 'error');
+    }
+}
+
+// Render all product cards
+function renderAllProductCards(products) {
+    productsGridContainer.innerHTML = '';
+    products.forEach(product => {
+        const cardElement = buildProductCardElement(product);
+        productsGridContainer.appendChild(cardElement);
+    });
+}
+
+// Filter and display products
+function filterAndDisplayProducts() {
+    updateFilterButtonsAppearance();
+    
+    const filteredProducts = activeFilter === 'all' 
+        ? allProductsData 
+        : allProductsData.filter(product => Number(product.user_id) === Number(CURRENT_USER_ID));
+    
+    if (filteredProducts.length === 0) {
+        displayPageSection({ 
+        showLoading: false,
+        showError: false,
+        showEmpty: true,
+        showGrid: false
+        });
+    } else {
+        renderAllProductCards(filteredProducts);
+        displayPageSection({ 
+        showLoading: false,
+        showError: false,
+        showEmpty: false,
+        showGrid: true
+        });
+    }
+}
+
+// Fetch products from server
+async function fetchProductsFromServer() {
+    try {
+        displayPageSection({ showLoading: true });
+        
+        const response = await fetch(PRODUCTS_API_ENDPOINT, {
+        headers: { 'Accept': 'application/json' },
+        });
+
+        if (!response.ok) {
+        throw new Error('Failed to fetch products from server');
+        }
+
+        const productsData = await response.json();
+        allProductsData = productsData || [];
+        
+        filterAndDisplayProducts();
+    } catch (error) {
+        console.error('Error loading products:', error);
+        displayPageSection({ showError: true, errorMsg: error.message });
+    }
+}
+
+// Refresh products
+function refreshProducts() {
+    fetchProductsFromServer();
+    showToast('Refreshing...', 'Getting latest products', 'info', 2000);
+}
+
+// Event handlers for filters
+function handleShowAllProductsClick() {
+    activeFilter = 'all';
+    filterAndDisplayProducts();
+}
+
+function handleShowMyProductsClick() {
+    activeFilter = 'my';
+    filterAndDisplayProducts();
+}
+
+// Function to show delete confirmation modal
+function showDeleteModal(productId, productName) {
+    const modalHtml = `
+        <div class="fixed inset-0 z-50 overflow-y-auto">
+            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"></div>
+                
+                <div class="relative inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+                    <!-- Modal Header -->
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold text-red-600">Delete Product</h3>
+                        <button onclick="hideDeleteModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <!-- Modal Content -->
+                    <div class="mb-6">
+                        <p class="text-gray-600 mb-4">Are you sure you want to delete this product?</p>
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                            <p class="font-semibold text-red-800">${productName}</p>
+                            <p class="text-sm text-red-600 mt-1">This action cannot be undone.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Modal Actions -->
+                    <div class="flex space-x-3">
+                        <button type="button" onclick="hideDeleteModal()" 
+                                class="flex-1 px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors">
+                            Cancel
+                        </button>
+                        <button type="button" onclick="confirmDeleteProduct('${productId}')" 
+                                class="flex-1 px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg font-medium transition-colors">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+// Function to hide delete modal
+function hideDeleteModal() {
+    const modals = document.querySelectorAll('.fixed.inset-0');
+    modals.forEach(modal => {
+        if (modal.innerHTML.includes('Delete Product')) {
+            modal.remove();
+        }
+    });
+}
+
+// Function to confirm product deletion
+async function confirmDeleteProduct(productId) {
+    try {
+        const response = await fetch(getDeleteProductUrl(productId), {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        });
+
+        if (response.ok) {
+            showToast('Deleted!', 'Product deleted successfully', 'success');
+            hideDeleteModal();
+            refreshProducts(); // Refresh the product list
+        } else {
+            const result = await response.json();
+            const errorMsg = result.message || result.error || 'Failed to delete product';
+            showToast('Error', errorMsg, 'error');
+        }
+        
+    } catch (error) {
+        console.error('Delete error:', error);
+        showToast('Network Error', 'Failed to delete product', 'error');
+    }
+}
+
+// Initialize page
+function initializeProductPage() {
+    if (showAllProductsButton && showMyProductsButton) {
+        showAllProductsButton.addEventListener('click', handleShowAllProductsClick);
+        showMyProductsButton.addEventListener('click', handleShowMyProductsClick);
+    }
+    
+    fetchProductsFromServer();
+}
+
+// Start application when DOM is loaded
+document.addEventListener('DOMContentLoaded', initializeProductPage);
+
+// Listen for custom events from modal
+document.addEventListener('productAdded', function() {
+    fetchProductsFromServer();
+});
+
+// Close modal when clicking outside
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('productDetailModal');
+    if (event.target === modal) {
+        hideProductDetailModal();
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        hideProductDetailModal();
+    }
+});
+</script>
 
 <style>
 /* Grid Pattern Background */
 .bg-grid-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  position: relative;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
 }
 
 .bg-grid-gradient::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: 
-    linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
-  background-size: 50px 50px;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
 }
 
 /* Font Families */
 body {
-  font-family: 'Open Sans', sans-serif;
+    font-family: 'Open Sans', sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6, .font-bold, .font-semibold {
-  font-family: 'Montserrat', sans-serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .hover\:scale-105:hover { transform: scale(1.05); }
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {
-  .text-4xl { font-size: 2rem; }
-  .grid-cols-3 { grid-template-columns: 1fr; }
-  .flex.space-x-3 { flex-direction: column; gap: 0.75rem; }
+    .text-4xl { font-size: 2rem; }
+    .grid-cols-3 { grid-template-columns: 1fr; }
+    .flex.space-x-3 { flex-direction: column; gap: 0.75rem; }
+    
+    /* Stack action buttons vertically on mobile */
+    .justify-center.space-x-4 {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .justify-center.space-x-4 > button {
+        width: 100%;
+    }
 }
 
 @media (max-width: 640px) {
-  .max-w-7xl {
-    max-width: 100%;
-    margin: 0.5rem;
-  }
-  
-  .p-8 {
-    padding: 1.5rem !important;
-  }
+    .max-w-7xl {
+        max-width: 100%;
+        margin: 0.5rem;
+    }
+    
+    .p-8 {
+        padding: 1.5rem !important;
+    }
 }
-
 </style>
 
 {% endblock content %}
